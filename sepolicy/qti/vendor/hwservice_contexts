@@ -1,5 +1,6 @@
 # Camera
-vendor.oplus.hardware.cammidasservice::IMIDASService    u:object_r:hal_camera_hwservice:s0
+vendor.oplus.hardware.cammidasservice::IMIDASService                   u:object_r:hal_camera_hwservice:s0
+vendor.qti.hardware.camera.cameraextension::ICameraExtensionService    u:object_r:vendor_hal_camera_extension_hwservice:s0
 
 # Charger
 vendor.oplus.hardware.charger::ICharger u:object_r:hal_charger_hwservice:s0

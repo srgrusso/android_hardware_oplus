@@ -273,4 +273,6 @@
          empty string is passed in -->
     <string name="config_wlan_network_service_package">vendor.qti.iwlan</string>
 
+     <!-- Path to fast charging status file to detect whether an oem fast charger is active -->
+    <string name="config_oemFastChargerStatusPath" translatable="false">/sys/class/oplus_chg/battery/fast_charge</string>
 </resources>

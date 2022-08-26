@@ -2,5 +2,8 @@ rw_dir_file(system_app, sysfs_vibrator)
 rw_dir_file(system_app, vendor_proc_display)
 rw_dir_file(system_app, vendor_sysfs_graphics)
 
+# Touch
+rw_dir_file(system_app, vendor_proc_display)
+
 # Zram
 r_dir_file(system_app, sysfs_zram)

@@ -4,6 +4,9 @@ type vendor_hal_camera_extension_hwservice, hwservice_manager_type, protected_hw
 # Charger
 type hal_charger_hwservice, hwservice_manager_type;
 
+# Dolby
+type hal_dms_hwservice, hwservice_manager_type;
+
 # ORMS
 type vendor_hal_orms_hwservice, hwservice_manager_type, protected_hwservice;
 

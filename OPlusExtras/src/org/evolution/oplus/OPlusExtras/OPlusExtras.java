@@ -81,6 +81,8 @@ public class OPlusExtras extends PreferenceFragment
     private static TwoStatePreference mAutoHBMSwitch;
     private Preference mHBMInfo;
 
+    private static final String KEY_CATEGORY_DOLBY = "dolby";
+
     public static final String KEY_CATEGORY_CPU = "cpu";
     public static final String KEY_POWER_EFFICIENT_WQ_SWITCH = "power_efficient_workqueue";
     public static final String KEY_TOUCHBOOST_SWITCH = "touchboost";
@@ -171,7 +173,7 @@ public class OPlusExtras extends PreferenceFragment
             startActivity(intent);
             return true;
         });
-
+    
         // Kcal
         displayCategory = displayCategory | isFeatureSupported(context, R.bool.config_deviceSupportsKcal);
         if (isFeatureSupported(context, R.bool.config_deviceSupportsKcal)) {
@@ -229,6 +231,17 @@ public class OPlusExtras extends PreferenceFragment
 
         if (!displayCategory) {
             getPreferenceScreen().removePreference((Preference) findPreference(KEY_CATEGORY_DISPLAY));
+        }
+
+        /**
+         * Dolby
+         * The redundant condition could've been merged as this category only has a single config,
+         * but we keep it to maintain consistency with the rest of the code
+         **/
+        boolean dolbyCategory = false;
+        dolbyCategory = displayCategory | isFeatureSupported(context, R.bool.config_deviceSupportsDolby);
+        if (!dolbyCategory) {
+            getPreferenceScreen().removePreference((Preference) findPreference(KEY_CATEGORY_DOLBY));
         }
 
         boolean cpuCategory = false;
@@ -535,7 +548,7 @@ public class OPlusExtras extends PreferenceFragment
             prefChange.putBoolean(KEY_AUTO_HBM_SWITCH, enabled).commit();
             FileUtils.enableService(getContext());
             return true;
-          } else if (preference == mFpsInfo) {
+        } else if (preference == mFpsInfo) {
             boolean enabled = (Boolean) newValue;
             Intent fpsinfo = new Intent(this.getContext(),
                     org.evolution.oplus.OPlusExtras.services.FPSInfoService.class);

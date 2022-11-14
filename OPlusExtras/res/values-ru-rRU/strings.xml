@@ -208,6 +208,11 @@
     <string name="usb2_fc_title">Быстрая зарядка USB 2.0</string>
     <string name="usb2_fc_summary">Принудительная быстрая зарядка до 900mA в режиме USB 2.0</string>
     <string name="usb2_fc_warning">Интерфейс с зарядкой dash/warp; включается только в применимых случаях</string>
+    <!-- Audio -->
+    <string name="category_audio">Звук</string>
+    <!-- Audio - Dolby -->
+    <string name="dolby_title">Dolby Atmos</string>
+    <string name="dolby_summary">Улучшение качества звука с помощью Dolby</string>
     <!-- Vibrator -->
     <string name="category_vibrator">Вибрация</string>
     <string name="vib_strength_title">Общая</string>

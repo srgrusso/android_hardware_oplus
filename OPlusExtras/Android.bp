@@ -12,6 +12,7 @@ android_app {
     ],
 
     srcs: [
+        "src/**/*.aidl",
         "src/**/*.java",
         "src/**/*.kt",
     ],

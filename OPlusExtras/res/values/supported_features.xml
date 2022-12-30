@@ -64,4 +64,7 @@
 
     <!-- Whether device supports System vibration intensity -->
     <bool name="config_deviceSupportsSysVib">false</bool>
+
+    <!-- Whether device support 5g NR Mode Switcher -->
+    <bool name="config_deviceSupportsNRModeSwitcher">false</bool>
 </resources>

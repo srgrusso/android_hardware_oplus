@@ -12,18 +12,23 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.telephony.SubscriptionManager;
 import android.util.Log;
+import android.widget.Toast;
 import android.view.animation.AccelerateInterpolator;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -37,6 +42,8 @@ import androidx.preference.TwoStatePreference;
 
 import java.util.Arrays;
 import java.util.Random;
+
+import com.qualcomm.qcrilmsgtunnel.IQcrilMsgTunnel;
 
 import com.plattysoft.leonids.ParticleSystem;
 
@@ -95,6 +102,10 @@ public class OPlusExtras extends PreferenceFragment
     private static SwitchPreference mFpsInfo;
     private CustomSeekBarPreference mFpsInfoTextSizePreference;
 
+    public static final String KEY_CATEGORY_NETWORK = "network";
+    private static final String KEY_NR_MODE_SWITCHER = "nr_mode_switcher";
+    private ListPreference mNrModeSwitcher;
+
     public static final String KEY_CATEGORY_GPU = "gpu";
     public static final String KEY_ADRENOBOOST = "adrenoboost";
     private AdrenoBoostPreference mAdrenoBoost;
@@ -127,6 +138,9 @@ public class OPlusExtras extends PreferenceFragment
     public static final String KEY_CATEGORY_VIBRATOR = "vibrator";
     public static final String KEY_VIBSTRENGTH = "vib_strength";
     private VibratorStrengthPreference mVibratorStrength;
+
+    private Protocol mProtocol;
+    private Runnable mUnbindService;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -205,34 +219,6 @@ public class OPlusExtras extends PreferenceFragment
             mAutoHBMSwitch = (TwoStatePreference) findPreference(KEY_AUTO_HBM_SWITCH);
             mAutoHBMSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(OPlusExtras.KEY_AUTO_HBM_SWITCH, false));
             mAutoHBMSwitch.setOnPreferenceChangeListener(this);
-
-        // EasterEgg (HBM Info)
-        mHBMInfo = (Preference)findPreference(KEY_HBM_INFO);
-        mHBMInfo.setOnPreferenceClickListener(preference -> {
-
-            Random rand =new Random();
-             int firstRandom = rand.nextInt(91-0);
-             int secondRandom = rand.nextInt(181-90)+90;
-             int thirdRandom = rand.nextInt(181-0);
-
-            Drawable evo = getResources().getDrawable(R.drawable.evo,null);
-             int randomColor;
-             randomColor = Color.rgb(
-             Color.red(rand.nextInt(0xFFFFFF)),
-             Color.green(rand.nextInt(0xFFFFFF)),
-             Color.blue(rand.nextInt(0xFFFFFF)));
-             evo.setTint(randomColor);
-
-            ParticleSystem ps = new ParticleSystem(getActivity(),50,evo,2000);
-             ps.setScaleRange(0.7f,1.3f);
-             ps.setSpeedRange(0.1f,0.25f);
-             ps.setAcceleration(0.0001f,thirdRandom);
-             ps.setRotationSpeedRange(firstRandom,secondRandom);
-             ps.setFadeOut(300);
-             ps.oneShot(this.getView(),50);
-        return true;
-        });
-
         }
         else {
             findPreference(KEY_HBM_SWITCH).setVisible(false);
@@ -460,6 +446,43 @@ public class OPlusExtras extends PreferenceFragment
         if (!vibratorCategory) {
             getPreferenceScreen().removePreference((Preference) findPreference(KEY_CATEGORY_VIBRATOR));
         }
+
+        boolean mNetworkCategory = false;
+
+        // Network
+        if (isFeatureSupported(context, R.bool.config_deviceSupportsNRModeSwitcher)) {
+            Intent intent = new Intent();
+            intent.setClassName("com.qualcomm.qcrilmsgtunnel", "com.qualcomm.qcrilmsgtunnel.QcrilMsgTunnelService");
+            context.bindServiceAsUser(intent, new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    IQcrilMsgTunnel tunnel = IQcrilMsgTunnel.Stub.asInterface(service);
+                    if (tunnel != null)
+                        mProtocol = new Protocol(tunnel);
+    
+                    ServiceConnection serviceConnection = this;
+    
+                    mUnbindService = () -> context.unbindService(serviceConnection);
+                }
+    
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    mProtocol = null;
+                }
+            }, context.BIND_AUTO_CREATE, UserHandle.CURRENT);
+    
+            mNrModeSwitcher = (ListPreference) findPreference(KEY_NR_MODE_SWITCHER);
+            mNrModeSwitcher.setOnPreferenceChangeListener(this);
+
+            mNetworkCategory = true;
+        }
+        else {
+           findPreference(KEY_NR_MODE_SWITCHER).setVisible(false);
+        }
+
+        if (!mNetworkCategory) {
+            getPreferenceScreen().removePreference((Preference) findPreference(KEY_CATEGORY_NETWORK));
+        }
     }
 
     public static boolean isFeatureSupported(Context ctx, int feature) {
@@ -553,7 +576,10 @@ public class OPlusExtras extends PreferenceFragment
             }
             return true;
 
-            }
+        } else if (preference == mNrModeSwitcher) {
+            int mode = Integer.parseInt(newValue.toString());
+            return setNrModeChecked(mode);
+        }
 
         String key = preference.getKey();
         switch (key) {
@@ -857,6 +883,30 @@ public class OPlusExtras extends PreferenceFragment
         Intent fpsinfo = new Intent(context, FPSInfoService.class);
         context.stopService(fpsinfo);
         context.startService(fpsinfo);
+    }
+
+    private boolean setNrModeChecked(int mode) {
+        if (mode == 0) {
+            return setNrModeChecked(Protocol.NR_5G_DISABLE_MODE_TYPE.NAS_NR5G_DISABLE_MODE_SA);
+        } else if (mode == 1) {
+            return setNrModeChecked(Protocol.NR_5G_DISABLE_MODE_TYPE.NAS_NR5G_DISABLE_MODE_NSA);
+        } else {
+            return setNrModeChecked(Protocol.NR_5G_DISABLE_MODE_TYPE.NAS_NR5G_DISABLE_MODE_NONE);
+        }
+    }
+
+    private boolean setNrModeChecked(Protocol.NR_5G_DISABLE_MODE_TYPE mode) {
+        if (mProtocol == null) {
+            Toast.makeText(getContext(), R.string.service_not_ready, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        int index = SubscriptionManager.getSlotIndex(SubscriptionManager.getDefaultDataSubscriptionId());
+        if (index == SubscriptionManager.INVALID_SIM_SLOT_INDEX) {
+            Toast.makeText(getContext(), R.string.unavailable_sim_slot, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        new Thread(() -> mProtocol.setNrMode(index, mode)).start();
+        return true;
     }
 
     public static class WarningDialogFragment extends DialogFragment {

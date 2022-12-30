@@ -221,6 +221,19 @@
         <item>8</item>
     </string-array>
 
+    <!-- NrModeSwitcher -->
+    <string-array name="nr_mode_switcher_entries" translatable="false">
+        <item>@string/nsa_only</item>
+        <item>@string/sa_only</item>
+        <item>@string/nsa_sa</item>
+    </string-array>
+
+    <string-array name="nr_mode_switcher_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    
     <!-- Pickup gesture -->
     <string-array name="pick_up_gesture_entries" translatable="false">
         <item>@string/disabled</item>

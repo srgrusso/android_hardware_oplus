@@ -113,7 +113,7 @@ InputFFDevice::InputFFDevice()
             continue;
         }
 
-        if (strcmp(name, "qcom-hv-haptics") && strcmp(name, "qti-haptics")) {
+        if (!(strcmp(name, "qcom-hv-haptics") && strcmp(name, "qti-haptics"))) {
             ALOGD("not a qcom/qti haptics device\n");
             close(fd);
             continue;
@@ -336,6 +336,7 @@ LedVibratorDevice::LedVibratorDevice() {
     }
 
     mDetected = true;
+    usleep(7000000);
 }
 
 int LedVibratorDevice::write_value(const char *file, const char *value) {
@@ -371,7 +372,7 @@ int LedVibratorDevice::write_value(const char *file, int value) {
     return write_value(file, std::to_string(value).c_str());
 }
 
-/*
+
 int LedVibratorDevice::on(int32_t timeoutMs) {
     int ret = 0;
     if (timeoutMs <= 0) {
@@ -389,7 +390,7 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
 
     return ret;
 }
-*/
+/*
 
 int LedVibratorDevice::on(int32_t timeoutMs) {
     int ret = 0;
@@ -404,6 +405,7 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
 
     return ret;
 }
+*/
 
 int LedVibratorDevice::onWaveform(int waveformIndex) {
     int ret = 0;
@@ -464,10 +466,11 @@ ndk::ScopedAStatus Vibrator::on(int32_t timeoutMs,
     int ret = 0;
 
     ALOGD("Vibrator on for timeoutMs: %d", timeoutMs);
-    if (ledVib.mDetected)
+    if (ledVib.mDetected){
         std::thread(&LedVibratorDevice::on, ledVib, timeoutMs).detach();
-    else
+    }else{
         ret = ff.on(timeoutMs);
+    }
 
     if (ret != 0)
         return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_SERVICE_SPECIFIC));

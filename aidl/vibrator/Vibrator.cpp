@@ -335,9 +335,14 @@ LedVibratorDevice::LedVibratorDevice() {
         return;
     }
 
-    mDetected = true;
-    usleep(7000000);
+    std::thread(&LedVibratorDevice::setMDetected, this, true, 6000000).detach();
 }
+
+void LedVibratorDevice::setMDetected(bool val, int delay){
+    usleep(delay);
+    mDetected = val;
+}
+
 
 int LedVibratorDevice::write_value(const char *file, const char *value) {
     int fd;

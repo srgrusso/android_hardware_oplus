@@ -63,6 +63,7 @@ public:
     bool mDetected;
     int write_value(const char *file, const char *value);
     int write_value(const char *file, int value);
+    void setMDetected(bool val, int delay);
 };
 
 #ifdef TARGET_SUPPORTS_OFFLOAD

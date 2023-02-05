@@ -371,6 +371,7 @@ int LedVibratorDevice::write_value(const char *file, int value) {
     return write_value(file, std::to_string(value).c_str());
 }
 
+/*
 int LedVibratorDevice::on(int32_t timeoutMs) {
     int ret = 0;
     if (timeoutMs <= 0) {
@@ -381,6 +382,21 @@ int LedVibratorDevice::on(int32_t timeoutMs) {
         ret |= write_value(LED_DEVICE "/vmax", 1600);
     }
     ret |= write_value(LED_DEVICE "/waveform_index", 7);
+    ret |= write_value(LED_DEVICE "/duration", timeoutMs);
+    ret |= write_value(LED_DEVICE "/state", "1");
+    ret |= write_value(LED_DEVICE "/activate", "1");
+    ret |= write_value(LED_DEVICE "/activate", "0");
+
+    return ret;
+}
+*/
+
+int LedVibratorDevice::on(int32_t timeoutMs) {
+    int ret = 0;
+    if (timeoutMs <= 0) {
+        return ret;
+    }
+
     ret |= write_value(LED_DEVICE "/duration", timeoutMs);
     ret |= write_value(LED_DEVICE "/state", "1");
     ret |= write_value(LED_DEVICE "/activate", "1");
@@ -445,11 +461,11 @@ ndk::ScopedAStatus Vibrator::off() {
 
 ndk::ScopedAStatus Vibrator::on(int32_t timeoutMs,
                                 const std::shared_ptr<IVibratorCallback>& callback) {
-    int ret;
+    int ret = 0;
 
     ALOGD("Vibrator on for timeoutMs: %d", timeoutMs);
     if (ledVib.mDetected)
-        ret = ledVib.on(timeoutMs);
+        std::thread(&LedVibratorDevice::on, ledVib, timeoutMs).detach();
     else
         ret = ff.on(timeoutMs);
 

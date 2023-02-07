@@ -38,6 +38,7 @@
 #include <sys/ioctl.h>
 #include <thread>
 #include <stdio.h>
+#include <sys/wait.h>
 
 #include "include/Vibrator.h"
 #ifdef USE_EFFECT_STREAM
@@ -114,7 +115,7 @@ InputFFDevice::InputFFDevice()
             continue;
         }
 
-        if (!(strcmp(name, "qcom-hv-haptics") && strcmp(name, "qti-haptics"))) {
+        if (strcmp(name, "qcom-hv-haptics") && strcmp(name, "qti-haptics")) {
             ALOGD("not a qcom/qti haptics device\n");
             close(fd);
             continue;
@@ -336,21 +337,22 @@ LedVibratorDevice::LedVibratorDevice() {
         return;
     }
 
-    std::thread(&LedVibratorDevice::setMDetected, this, true, 1000000).detach();
+    std::thread(&LedVibratorDevice::setMDetected, this, true, 500000).detach();
 }
 
 void LedVibratorDevice::setMDetected(bool val, int delay){
-    int exitcode = 1;
     while(true){
         usleep(delay);
         FILE *pipe = popen("/system/bin/logcat -d | /system/bin/grep -Fq 'aw8697_rtp_loaded: rtp update complete'", "r");
         if (pipe == nullptr) {
-            return;
+            continue;
         }
-        exitcode = WEXITSTATUS(pclose(pipe));
-        if(exitcode == 0){
-            mDetected = val;
-            return;
+        int exitcode = pclose(pipe);
+        if(WIFEXITED(exitcode)) {
+            if(WEXITSTATUS(exitcode) == 0){
+                mDetected = val;
+                return;
+            }
         }
     }
 }

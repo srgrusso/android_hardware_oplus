@@ -1,3 +1,19 @@
 rw_dir_file(system_server, vendor_proc_tri_state_key)
 rw_dir_file(system_server, vendor_sysfs_battery_supply)
 rw_dir_file(system_server, vendor_sysfs_usb_supply)
+
+binder_call(system_server, hal_cameraHIDL_default)
+
+allow system_server camera_data_file:dir r_dir_perms;
+allow system_server camera_data_file:file r_file_perms;
+
+allow system_server hal_cameraHIDL_hwservice:hwservice_manager { find };
+
+allow system_server oneplus_camera_app:binder { call transfer };
+allow system_server oneplus_camera_app:process { setsched };
+
+allow system_server sysfs_battery_supply:file rw_file_perms;
+
+allow system_server vendor_app_file:file { ioctl };
+
+get_prop(system_server, vendor_camera_prop)

@@ -9,3 +9,8 @@ rw_dir_file(system_app, vendor_sysfs_graphics)
 rw_dir_file(system_app, vendor_sysfs_kgsl)
 rw_dir_file(system_app, vendor_sysfs_msm_perf)
 rw_dir_file(system_app, vendor_sysfs_usb_supply)
+
+allow system_app hal_cameraHIDL_hwservice:hwservice_manager { find };
+allow system_app oem_service:service_manager { find };
+
+binder_call(system_app, hal_cameraHIDL_default)

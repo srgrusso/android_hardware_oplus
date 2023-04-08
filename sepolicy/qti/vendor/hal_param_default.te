@@ -1,0 +1,3 @@
+#set_prop(hal_param_default, bootloader_prop)
+set_prop(hal_param_default, vendor_camera_prop)
+

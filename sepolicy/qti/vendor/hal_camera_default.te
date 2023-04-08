@@ -1,3 +1,15 @@
+# Binder calls
+binder_call(hal_camera_default, hal_cameraHIDL)
+binder_call(hal_camera_default, system_server)
+binder_call(hal_camera_default, oneplus_camera_app)
+
+# Allow hal_camera_default to find hal_cameraHIDL_hwservice
+allow hal_camera_default hal_cameraHIDL_hwservice:hwservice_manager { find };
+
+allow hal_camera_default self:socket { create ioctl read write };
+
+allow hal_camera_default public_adsprpcd_file:file r_file_perms;
+
 hal_attribute_hwservice(hal_camera, vendor_hal_camera_extension_hwservice)
 
 hal_client_domain(hal_camera_default, vendor_hal_cameraMDM)
@@ -9,7 +21,12 @@ allow hal_camera_default vendor_tof_device:chr_file rw_file_perms;
 
 allow hal_camera_default mnt_vendor_file:dir search;
 
-allow hal_camera_default proc_meminfo:file r_file_perms;
+allow hal_camera_default sysfs_net:dir { search };
+allow hal_camera_default sysfs_net:file { read };
+
+allow hal_camera_default qdsp_device:chr_file r_file_perms;
+
+allow hal_camera_default xdsp_device:chr_file r_file_perms;
 
 allow hal_camera_default vendor_persist_camera_file:dir w_dir_perms;
 allow hal_camera_default vendor_persist_camera_file:file create_file_perms;

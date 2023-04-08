@@ -1,0 +1,3 @@
+add_hwservice(hal_cameraHIDL_server, hal_cameraHIDL_hwservice)
+allow hal_cameraHIDL_client hal_cameraHIDL_hwservice:hwservice_manager find;
+

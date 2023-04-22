@@ -2,4 +2,4 @@ rw_dir_file(system_server, vendor_proc_tri_state_key)
 rw_dir_file(system_server, vendor_sysfs_battery_supply)
 rw_dir_file(system_server, vendor_sysfs_usb_supply)
 
-allow system_server sysfs:file read;
+allow system_server sysfs:file { read open write getattr };

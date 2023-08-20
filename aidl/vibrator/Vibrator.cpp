@@ -336,8 +336,8 @@ LedVibratorDevice::LedVibratorDevice() {
         ALOGE("open %s failed, errno = %d", devicename, errno);
         return;
     }
-
-    std::thread(&LedVibratorDevice::setMDetected, this, true, 500000).detach();
+    mDetected = true;
+    //std::thread(&LedVibratorDevice::setMDetected, this, true, 500000).detach();
 }
 
 void LedVibratorDevice::setMDetected(bool val, int delay){
@@ -486,7 +486,8 @@ ndk::ScopedAStatus Vibrator::on(int32_t timeoutMs,
 
     ALOGD("Vibrator on for timeoutMs: %d", timeoutMs);
     if (ledVib.mDetected){
-        std::thread(&LedVibratorDevice::on, ledVib, timeoutMs).detach();
+        ret = ledVib.on(timeoutMs);
+        //std::thread(&LedVibratorDevice::on, ledVib, timeoutMs).detach();
     }else{
         ret = ff.on(timeoutMs);
     }

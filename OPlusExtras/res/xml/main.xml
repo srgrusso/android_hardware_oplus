@@ -46,12 +46,12 @@
         android:key="cpu"
         android:title="@string/cpu_title">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="power_efficient_workqueue"
             android:title="@string/power_efficient_workqueue_title"
             android:summary="@string/power_efficient_workqueue_summary" />
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="touchboost"
             android:title="@string/touchboost_title"
             android:summary="@string/touchboost_summary" />
@@ -82,12 +82,12 @@
                     android:targetClass="org.lineageos.settings.refreshrate.RefreshActivity" />
         </Preference>
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="dc"
             android:title="@string/dc_mode_title"
             android:summary="@string/dc_mode_summary" />
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="auto_hbm"
             android:title="@string/auto_hbm_title"
             android:summary="@string/auto_hbm_summary" />
@@ -109,7 +109,7 @@
         android:key="filesystem"
         android:title="@string/filesystem_title">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="fsync"
             android:title="@string/fsync_title"
             android:summary="@string/fsync_summary" />
@@ -137,7 +137,7 @@
         android:key="fps"
         android:title="@string/fps_title">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="fps_info"
             android:title="@string/fps_info_title"
             android:summary="@string/fps_info_summary"
@@ -174,12 +174,12 @@
         android:key="power"
         android:title="@string/category_power">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="powershare_mode"
             android:title="@string/powershare_mode_title"
             android:summary="@string/powershare_mode_summary" />
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="quiet_mode"
             android:title="@string/quiet_mode_title"
             android:summary="@string/quiet_mode_summary" />
@@ -190,7 +190,7 @@
         android:key="touchscreen"
         android:title="@string/touchscreen_title">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="game_mode"
             android:title="@string/game_mode_title"
             android:summary="@string/game_mode_summary" />
@@ -201,7 +201,7 @@
             android:summary="@string/game_mode_warning"
             android:persistent="false" />
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="tp_edge_limit"
             android:title="@string/tp_edge_limit_mode_title"
             android:summary="@string/tp_edge_limit_mode_summary" />
@@ -228,12 +228,12 @@
         android:key="usb"
         android:title="@string/usb_title">
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="otg"
             android:title="@string/otg_title"
             android:summary="@string/otg_summary" />
 
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="usb2_fast_charge"
             android:title="@string/usb2_fc_title"
             android:summary="@string/usb2_fc_summary" />
